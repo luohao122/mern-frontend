@@ -1,0 +1,60 @@
+.PlaceItem {
+  margin: 1rem 0;
+}
+
+.PlaceItemContent {
+  padding: 0;
+}
+
+.PlaceItemInfo {
+  padding: 1rem;
+  text-align: center;
+}
+
+.PlaceItemImg {
+  height: 12.5rem;
+  margin-right: 1.5rem;
+  width: 100%;
+}
+
+.PlaceItemImg img {
+  height: 100%;
+  object-fit: cover;
+  width: 100%;
+}
+
+.PlaceItemInfo h2,
+.PlaceItemInfo h3,
+.PlaceItemInfo p {
+  margin: 0 0 0.5rem 0;
+}
+
+.PlaceItemActions {
+  border-top: 1px solid #ccc;
+  padding: 1rem;
+  text-align: center;
+}
+
+.PlaceItemModalContent {
+  padding: 0;
+}
+
+.PlaceItemModalActions {
+  text-align: right;
+}
+
+.PlaceItemActions button,
+.PlaceItemActions a {
+  margin: 0.5rem;
+}
+
+.MapContainer {
+  height: 15rem;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .PlaceItemImg {
+    height: 20rem;
+  }
+}

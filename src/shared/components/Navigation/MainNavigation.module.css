@@ -1,0 +1,45 @@
+.MainNavigationMenuButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  height: 3rem;
+  justify-content: space-around;
+  margin-right: 2rem;
+  width: 3rem;
+}
+
+.MainNavigationMenuButton span {
+  background: #fff;
+  display: block;
+  height: 2.5px;
+  width: 3rem;
+}
+
+.MainNavigationTitle {
+  color: #fff;
+}
+
+.MainNavigationTitle a {
+  color: white;
+  text-decoration: none;
+}
+
+.MainNavigationHeaderNav {
+  display: none;
+}
+
+.MainNavigationDrawerNav {
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .MainNavigationMenuButton {
+    display: none;
+  }
+
+  .MainNavigationHeaderNav {
+    display: block;
+  }
+}

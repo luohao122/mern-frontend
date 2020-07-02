@@ -1,0 +1,9 @@
+.Card {
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  border-radius: 6px;
+  margin: 0;
+  padding: 1rem;
+  position: relative;
+  overflow: hidden;
+}
