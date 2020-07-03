@@ -1,0 +1,15 @@
+.AuthHeader {
+  color: #fff;
+  text-align: center;
+}
+
+.AuthContainer {
+  margin: 7rem auto;
+  max-width: 25rem;
+  text-align: center;
+  width: 90%;
+}
+
+.AuthContainer form {
+  margin-bottom: 1rem;
+}
