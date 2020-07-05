@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import axios from "axios";
 
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
@@ -17,10 +18,6 @@ const Auth = (props) => {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [formState, inputHandler, setFormData] = useForm(
     {
-      // name: {
-      //   value: "",
-      //   isValid: false,
-      // },
       email: {
         value: "",
         isValid: false,
@@ -33,9 +30,38 @@ const Auth = (props) => {
     false
   );
 
-  const authSubmitHandler = (event) => {
+  const authSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs);
+
+    if (isLoginMode) {
+    } else {
+      try {
+        const response = await axios.post(
+          "http://localhost:5000/api/users/signup",
+          {
+            name: formState.inputs.name,
+            email: formState.inputs.email,
+            password: formState.inputs.password,
+          }
+        );
+        // const response = await fetch("http://localhost:5000/api/users/signup", {
+        //   method: "POST",
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        //   body: JSON.stringify({
+        //     name: formState.inputs.name,
+        //     email: formState.inputs.email,
+        //     password: formState.inputs.password,
+        //   }),
+        // });
+        // const responseData = await response.json();
+        // console.log(responseData);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
     auth.login();
   };
 
