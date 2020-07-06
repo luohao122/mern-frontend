@@ -1,21 +1,27 @@
 import React, { useState, useContext } from "react";
-import axios from "axios";
 
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
+
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
   VALIDATOR_EMAIL,
 } from "../../shared/util/validators";
 import { useForm } from "../../shared/hooks/form-hook";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
 import classes from "./AuthForm.module.css";
 
 const Auth = (props) => {
   const auth = useContext(AuthContext);
   const [isLoginMode, setIsLoginMode] = useState(true);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+
   const [formState, inputHandler, setFormData] = useForm(
     {
       email: {
@@ -32,37 +38,40 @@ const Auth = (props) => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
+    console.log(formState.inputs);
 
     if (isLoginMode) {
-    } else {
       try {
-        const response = await axios.post(
-          "http://localhost:5000/api/users/signup",
+        const responseData = await sendRequest(
+          "http://localhost:5000/api/users/login",
+          "POST",
+          JSON.stringify({
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
           {
-            name: formState.inputs.name,
-            email: formState.inputs.email,
-            password: formState.inputs.password,
+            "Content-Type": "application/json",
           }
         );
-        // const response = await fetch("http://localhost:5000/api/users/signup", {
-        //   method: "POST",
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        //   body: JSON.stringify({
-        //     name: formState.inputs.name,
-        //     email: formState.inputs.email,
-        //     password: formState.inputs.password,
-        //   }),
-        // });
-        // const responseData = await response.json();
-        // console.log(responseData);
-      } catch (err) {
-        console.log(err);
-      }
+        auth.login(responseData.user.id);
+      } catch (err) {}
+    } else {
+      try {
+        const responseData = await sendRequest(
+          "http://localhost:5000/api/users/signup",
+          "POST",
+          JSON.stringify({
+            name: formState.inputs.name.value,
+            email: formState.inputs.email.value,
+            password: formState.inputs.password.value,
+          }),
+          {
+            "Content-Type": "application/json",
+          }
+        );
+        auth.login(responseData.user.id);
+      } catch (err) {}
     }
-
-    auth.login();
   };
 
   const switchModeHandler = () => {
@@ -71,6 +80,7 @@ const Auth = (props) => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -82,6 +92,10 @@ const Auth = (props) => {
             value: "",
             isValid: false,
           },
+          image: {
+            value: null,
+            isValid: false,
+          },
         },
         false
       );
@@ -90,47 +104,54 @@ const Auth = (props) => {
   };
 
   return (
-    <Card className={classes.AuthContainer}>
-      <h2>Login Required</h2>
-      <hr />
-      <form onSubmit={authSubmitHandler}>
-        {!isLoginMode && (
+    <React.Fragment>
+      <ErrorModal error={error} onClear={clearError} />
+      <Card className={classes.AuthContainer}>
+        {isLoading && <LoadingSpinner asOverlay />}
+        <h2>Login Required</h2>
+        <hr />
+        <form onSubmit={authSubmitHandler}>
+          {!isLoginMode && (
+            <Input
+              id="name"
+              type="text"
+              label="Name"
+              element="input"
+              validators={[VALIDATOR_REQUIRE()]}
+              errorText="Please enter a name."
+              onInput={inputHandler}
+            />
+          )}
+          {!isLoginMode && (
+            <ImageUpload center id="image" onInput={inputHandler} />
+          )}
           <Input
-            id="name"
-            type="text"
-            label="Name"
+            id="email"
+            type="email"
+            label="Email"
             element="input"
-            validators={[VALIDATOR_REQUIRE()]}
-            errorText="Please enter a name."
+            validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
+            errorText="Please enter a valid email."
             onInput={inputHandler}
           />
-        )}
-        <Input
-          id="email"
-          type="email"
-          label="Email"
-          element="input"
-          validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
-          errorText="Please enter a valid email."
-          onInput={inputHandler}
-        />
-        <Input
-          id="password"
-          type="password"
-          label="Password"
-          element="input"
-          validators={[VALIDATOR_MINLENGTH(5)]}
-          errorText="Please enter a valid password, at least 5 characters."
-          onInput={inputHandler}
-        />
-        <Button type="submit" disabled={!formState.isValid}>
-          {isLoginMode ? "Login" : "SignUp"}
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            element="input"
+            validators={[VALIDATOR_MINLENGTH(6)]}
+            errorText="Please enter a valid password, at least 6 characters."
+            onInput={inputHandler}
+          />
+          <Button type="submit" disabled={!formState.isValid}>
+            {isLoginMode ? "Login" : "SignUp"}
+          </Button>
+        </form>
+        <Button inverse onClick={switchModeHandler}>
+          Switch to {isLoginMode ? "SignUp" : "Login"}
         </Button>
-      </form>
-      <Button inverse onClick={switchModeHandler}>
-        Switch to {isLoginMode ? "SignUp" : "Login"}
-      </Button>
-    </Card>
+      </Card>
+    </React.Fragment>
   );
 };
 

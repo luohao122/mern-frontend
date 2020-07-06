@@ -5,21 +5,6 @@ import Button from "../../shared/components/FormElements/Button";
 import PlaceItem from "./PlaceItem";
 import classes from "./PlaceList.module.css";
 
-const renderPlacesList = (items) => {
-  return items.map((place) => (
-    <PlaceItem
-      key={place.id}
-      id={place.id}
-      image={place.imageUrl}
-      title={place.title}
-      description={place.description}
-      address={place.address}
-      creatorId={place.creator}
-      coordinates={place.location}
-    />
-  ));
-};
-
 const PlaceList = (props) => {
   if (props.items.length === 0) {
     return (
@@ -32,7 +17,23 @@ const PlaceList = (props) => {
     );
   }
 
-  return <ul className={classes.PlaceList}>{renderPlacesList(props.items)}</ul>;
+  return (
+    <ul className={classes.PlaceList}>
+      {props.items.map((place) => (
+        <PlaceItem
+          key={place.id}
+          id={place.id}
+          image={place.image}
+          title={place.title}
+          description={place.description}
+          address={place.address}
+          creatorId={place.creator}
+          coordinates={place.location}
+          onDelete={props.onDeletePlace}
+        />
+      ))}
+    </ul>
+  );
 };
 
 export default PlaceList;
